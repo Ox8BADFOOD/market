@@ -10,11 +10,23 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
-import os
+import os, sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
+
+# 导包路径
+# ['/Users/max/Desktop/market/market',
+# '/Users/max/Desktop/market/market',
+# '/Applications/PyCharm.app/Contents/plugins/python/helpers/pycharm_display',
+# '/Users/max/.pyenv/versions/3.9.0/lib/python39.zip',
+# '/Users/max/.pyenv/versions/3.9.0/lib/python3.9',
+# '/Users/max/.pyenv/versions/3.9.0/lib/python3.9/lib-dynload',
+# '/Users/max/.virtualenvs/market/lib/python3.9/site-packages',
+# '/Applications/PyCharm.app/Contents/plugins/python/helpers/pycharm_matplotlib_backend']
+print(sys.path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -27,9 +39,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 INSTALLED_APPS = [
+    # 用户模块
+    'users.apps.UsersConfig',
+    'contents.apps.ContentsConfig',
+    'verifications.apps.VerificationsConfig',
+    'areas.apps.AreasConfig',
+    'goods.apps.GoodsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -66,7 +83,7 @@ TEMPLATES = [
             'environment': 'market.utils.jinja2_env.jinja2_environment',
         },
     },
-{
+    {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates')]
         ,
@@ -110,6 +127,13 @@ CACHES = {
     "session": {  # session
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "verify_code": {  # 图形验证码
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -178,6 +202,11 @@ LOGGING = {
     }
 }
 
+LOGIN_URL = '/login/'
+
+# 用户认证
+AUTHENTICATION_BACKENDS = ["users.utils.UsernameMobileAuthBackend"]
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 LANGUAGE_CODE = 'en-us'
@@ -190,9 +219,18 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 STATIC_URL = '/static/'
 # 配置静态文件加载路径
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+AUTH_USER_MODEL = "users.User"
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # 指定邮件后端
+EMAIL_HOST = 'smtp.163.com' # 发邮件主机
+EMAIL_PORT = 25 # 发邮件端口
+EMAIL_HOST_USER = 'bymiracles@163.com' # 授权的邮箱
+EMAIL_HOST_PASSWORD = 'EGDNTWMILUBHPLGL' # 邮箱授权时获得的密码，非注册登录密码
+EMAIL_FROM = '母爱妈妈<bymiracles@163.com>' # 发件人抬头
+EMAIL_VERIFY_URL = 'http://127.0.0.1:8000/emails/verification/'
