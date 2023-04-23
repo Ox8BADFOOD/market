@@ -234,3 +234,7 @@ EMAIL_HOST_USER = 'bymiracles@163.com' # 授权的邮箱
 EMAIL_HOST_PASSWORD = 'EGDNTWMILUBHPLGL' # 邮箱授权时获得的密码，非注册登录密码
 EMAIL_FROM = '母爱妈妈<bymiracles@163.com>' # 发件人抬头
 EMAIL_VERIFY_URL = 'http://127.0.0.1:8000/emails/verification/'
+# 指定自定义的Django文件存储类
+# DEFAULT_FILE_STORAGE = 'market.utils.fastdfs.fdfs_storage.FastDFSStorage'
+# FastDFS相关参数
+MEDIA_URL = 'http://172.16.104.2:8888/'

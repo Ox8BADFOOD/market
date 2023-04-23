@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^', include(('users.urls', 'users'), namespace='users')),
     url(r'^', include('verifications.urls')),
     url(r'^', include('areas.urls')),
+    url(r'^', include(('goods.urls', 'goods'), namespace='goods')),
     url(r'^', include(('contents.urls', 'index'), namespace='contents')),
 
 ]
