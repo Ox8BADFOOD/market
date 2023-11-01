@@ -8,8 +8,12 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 from django import http
+from django_redis import get_redis_connection
 from pymysql import DatabaseError
+
+from carts.utils import merge_cart_cookie_to_redis
 from celery_tasks.email.tasks import send_verify_email
+from goods import models
 from market.utils.response_code import RETCODE
 from market.utils.views import LoginRequiredMixin, LoginRequiredJSONMixin
 from users.models import User, Address
@@ -137,6 +141,8 @@ class LoginView(View):
             resp = redirect(reverse('contents:index'))
 
         resp.set_cookie(key="username", value=user.username, max_age=3600 * 24 * 15)
+
+        resp = merge_cart_cookie_to_redis( request, request.user, resp)
         return resp
 
 
@@ -418,7 +424,7 @@ class UpdateDestroyAddressView(LoginRequiredJSONMixin, View):
             "tel": address.tel,
             "email": address.email
         }
-        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '更新地址成功','address': address_dic})
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '更新地址成功', 'address': address_dic})
 
     def delete(self, request: WSGIRequest, address_id: str):
         """删除地址"""
@@ -496,7 +502,7 @@ class ChangePasswordView(LoginRequiredMixin, View):
             request.user.set_password(raw_password=new_password)
             request.user.save()
         except Exception as e:
-            return render(request,'user_center_pass.html', context={'change_pwd_errmsg': '修改密码失败'})
+            return render(request, 'user_center_pass.html', context={'change_pwd_errmsg': '修改密码失败'})
 
         # 清理状态保持信息
         logout(request)
@@ -504,3 +510,53 @@ class ChangePasswordView(LoginRequiredMixin, View):
         response.delete_cookie(key='username')
 
         return response
+
+
+class UserBrowseHistory(LoginRequiredJSONMixin, View):
+    """用户浏览记录"""
+
+    def post(self, request: WSGIRequest):
+        """保存用户浏览记录"""
+        # 接受参数
+        json_dict = json.loads(request.body.decode())
+        sku_id = json_dict.get('sku_id')
+
+        # 校验参数
+        try:
+            models.SKU.objects.get(id=sku_id)
+        except models.SKU.DoesNotExist:
+            return http.HttpResponseForbidden(content='sku不存在')
+        # 保存用户浏览数据
+        redis_conn = get_redis_connection('history')
+        pl = redis_conn.pipeline()
+        user_id = request.user.id
+
+        # 去重
+        pl.lrem('history_%s' % user_id, 0, sku_id)
+        # 添加
+        pl.lpush('history_%s' % user_id, sku_id)
+        # 截取
+        pl.ltrim('history_%s' % user_id, 0, 4)
+        # 执行
+        pl.execute()
+
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
+
+    def get(self, request: WSGIRequest):
+        """获取用户浏览记录"""
+        # 获取Redis存储的sku_id列表信息
+        redis_conn = get_redis_connection(alias='history')
+        user_id = request.user.id
+        sku_ids = redis_conn.lrange('history_%s' % user_id, 0, -1)
+
+        skus = []
+        for sku_id in sku_ids:
+            sku = models.SKU.objects.get(id=sku_id)
+            skus.append({
+                'id': sku.id,
+                'name': sku.name,
+                'default_image_url': sku.default_image.url,
+                'price': sku.price
+            })
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'skus': skus})
+

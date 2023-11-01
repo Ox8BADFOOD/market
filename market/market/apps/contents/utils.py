@@ -4,8 +4,15 @@ from goods.models import GoodsChannel
 
 def get_categories():
     """
-    提供商品频道和分类
-    :return 菜单字典
+    提供商品频道组信息
+    :return {
+        '组id': {
+                // 频道/一级类别
+                'channels':[],
+                // 二级类别sub_cats嵌套三级类别
+                "sub_cats": []
+                }
+    }
     """
     categories = OrderedDict()
     channels = GoodsChannel.objects.order_by('group_id', 'sequence')
