@@ -1,7 +1,7 @@
 from django import http
 from django.core.cache import cache
-from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import QuerySet
+from django.http import HttpRequest
 from django.shortcuts import render
 from django.views import View
 from areas.models import Area
@@ -16,7 +16,7 @@ logger = logging.getLogger('django')
 class AreasView(View):
     """省市区数据"""
 
-    def get(self, request: WSGIRequest):
+    def get(self, request: HttpRequest):
         """提供省市区数据"""
         area_id: str = request.GET.get(key="area_id")
         # 如果无id就是查询省

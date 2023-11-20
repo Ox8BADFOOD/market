@@ -32,6 +32,8 @@ urlpatterns = [
     url(r'^resetpwd/$', views.ChangePasswordView.as_view(), name="pass"),
     # 用户浏览记录
     url(r'^browse_histories/$', views.UserBrowseHistory.as_view()),
+    # 我的订单页面
+    url(r'^orders/info/(?P<page_num>\d+)/$', views.UserOrderInfoView.as_view(), name="orders"),
 ]
 
 

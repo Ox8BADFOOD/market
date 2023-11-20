@@ -1,12 +1,11 @@
 import base64
 import pickle
 
-from django.core.handlers.wsgi import WSGIRequest
-from django.http import HttpResponseBase
+from django.http import HttpResponseBase, HttpRequest
 from django_redis import get_redis_connection
 
 
-def merge_cart_cookie_to_redis(request: WSGIRequest, user, response:HttpResponseBase):
+def merge_cart_cookie_to_redis(request: HttpRequest, user, response:HttpResponseBase):
     """
     登录后合并cookie购物车数据到Redis
     :param request: 本次请求对象，获取cookie中的数据

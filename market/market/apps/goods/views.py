@@ -2,8 +2,8 @@ import logging
 from datetime import datetime
 
 from django import http
-from django.core.handlers.wsgi import WSGIRequest
 from django.core.paginator import Paginator, EmptyPage
+from django.http import HttpRequest
 from django.shortcuts import render
 from django.utils import timezone
 from django.views import View
@@ -17,7 +17,7 @@ logger = logging.getLogger('django')
 class ListView(View):
     """商品列表"""
 
-    def get(self, request: WSGIRequest, category_id: str, page_num: str):
+    def get(self, request: HttpRequest, category_id: str, page_num: str):
         """
         提供商品列表
         :param request: 请求
@@ -87,7 +87,7 @@ class ListView(View):
 class HotGoodsView(View):
     """商品热销排行"""
 
-    def get(self, request: WSGIRequest, category_id: str):
+    def get(self, request: HttpRequest, category_id: str):
         """
         提供商品热销排行JSON数据
         :param request: 请求
@@ -121,7 +121,7 @@ class HotGoodsView(View):
 class DetailView(View):
     """提供商品详情页"""
 
-    def get(self, request: WSGIRequest, sku_id: str):
+    def get(self, request: HttpRequest, sku_id: str):
         # 获取当前sku的信息
         try:
             sku = models.SKU.objects.get(id=sku_id)
@@ -185,7 +185,7 @@ class DetailView(View):
 class DetailVisitView(View):
     """详情页分类商品访问量"""
 
-    def post(self, request: WSGIRequest, category_id: str):
+    def post(self, request: HttpRequest, category_id: str):
 
         """记录分类商品访问量"""
         try:

@@ -2,7 +2,6 @@ import json
 import logging
 import re
 from django.contrib.auth import login, authenticate, logout
-from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -189,7 +188,7 @@ class LogoutView(View):
 class UserInfoView(LoginRequiredMixin, View):
     """用户信息"""
 
-    def get(self, request: WSGIRequest):
+    def get(self, request: HttpRequest):
         """提供个人信息界面"""
         context = {
             'username': request.user.username,
@@ -203,7 +202,7 @@ class UserInfoView(LoginRequiredMixin, View):
 class EmailView(LoginRequiredJSONMixin, View):
     """添加邮箱"""
 
-    def put(self, request: WSGIRequest):
+    def put(self, request: HttpRequest):
         """实现添加邮箱逻辑"""
         # 接收参数
         json_dict = json.loads(request.body.decode())
@@ -233,7 +232,7 @@ class EmailView(LoginRequiredJSONMixin, View):
 
 class VerifyEmailView(View):
 
-    def get(self, request: WSGIRequest):
+    def get(self, request: HttpRequest):
         """
         验证邮箱
         :param request:
@@ -260,7 +259,7 @@ class VerifyEmailView(View):
 class AddressView(LoginRequiredMixin, View):
     """用户收货地址"""
 
-    def get(self, request: WSGIRequest):
+    def get(self, request: HttpRequest):
         """提供收货地址界面"""
         login_user = request.user
         addresses = Address.objects.filter(user=login_user, is_delete=False)
@@ -289,7 +288,7 @@ class AddressView(LoginRequiredMixin, View):
         }
         return render(request=request, template_name='user_center_site.html', context=context)
 
-    def post(self, request: WSGIRequest):
+    def post(self, request: HttpRequest):
         """实现新增地址逻辑"""
         # 判断是否超过地址上限：最多20个
         # Address.objects.filter(user=request.user).count()
@@ -363,7 +362,7 @@ class AddressView(LoginRequiredMixin, View):
 class UpdateDestroyAddressView(LoginRequiredJSONMixin, View):
     """修改删除地址"""
 
-    def put(self, request: WSGIRequest, address_id: str):
+    def put(self, request: HttpRequest, address_id: str):
         """修改地址"""
 
         # 接受参数
@@ -426,7 +425,7 @@ class UpdateDestroyAddressView(LoginRequiredJSONMixin, View):
         }
         return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '更新地址成功', 'address': address_dic})
 
-    def delete(self, request: WSGIRequest, address_id: str):
+    def delete(self, request: HttpRequest, address_id: str):
         """删除地址"""
         try:
             address = Address.objects.get(id=address_id)
@@ -442,7 +441,7 @@ class UpdateDestroyAddressView(LoginRequiredJSONMixin, View):
 class DefaultAddressView(LoginRequiredJSONMixin, View):
     """设置默认地址"""
 
-    def put(self, request: WSGIRequest, address_id: str):
+    def put(self, request: HttpRequest, address_id: str):
         """设置默认地址"""
         try:
             default_address = Address.objects.get(id=address_id)
@@ -457,7 +456,7 @@ class DefaultAddressView(LoginRequiredJSONMixin, View):
 class UpdateTitleAddressView(LoginRequiredJSONMixin, View):
     """设置地址标题"""
 
-    def put(self, request: WSGIRequest, address_id: str):
+    def put(self, request: HttpRequest, address_id: str):
         json_dict: dict = json.loads(request.body.decode())
         title: str = json_dict.get('title')
 
@@ -473,11 +472,11 @@ class UpdateTitleAddressView(LoginRequiredJSONMixin, View):
 
 class ChangePasswordView(LoginRequiredMixin, View):
 
-    def get(self, request: WSGIRequest):
+    def get(self, request: HttpRequest):
         """展示修改密码界面"""
         return render(request, 'user_center_pass.html')
 
-    def post(self, request: WSGIRequest):
+    def post(self, request: HttpRequest):
         """实现修改密码逻辑"""
         old_password = request.POST.get('old_password')
         new_password = request.POST.get('new_password')
@@ -515,7 +514,7 @@ class ChangePasswordView(LoginRequiredMixin, View):
 class UserBrowseHistory(LoginRequiredJSONMixin, View):
     """用户浏览记录"""
 
-    def post(self, request: WSGIRequest):
+    def post(self, request: HttpRequest):
         """保存用户浏览记录"""
         # 接受参数
         json_dict = json.loads(request.body.decode())
@@ -542,7 +541,7 @@ class UserBrowseHistory(LoginRequiredJSONMixin, View):
 
         return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
 
-    def get(self, request: WSGIRequest):
+    def get(self, request: HttpRequest):
         """获取用户浏览记录"""
         # 获取Redis存储的sku_id列表信息
         redis_conn = get_redis_connection(alias='history')
@@ -560,3 +559,14 @@ class UserBrowseHistory(LoginRequiredJSONMixin, View):
             })
         return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'skus': skus})
 
+
+class UserOrderInfoView(LoginRequiredMixin, View):
+    """我的订单"""
+
+    def get(self, request:HttpRequest, page_num:int):
+        """提供我的订单页面"""
+
+        user = request.user
+        # 查询我的订单
+        orders = user.orderinfo_set.all().order_by("-create_time")
+        pass

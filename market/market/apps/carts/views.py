@@ -2,7 +2,8 @@ import base64
 import pickle
 from django import http
 import json
-from django.core.handlers.wsgi import WSGIRequest
+
+from django.http import HttpRequest
 from django.shortcuts import render
 from django.views import View
 from django_redis import get_redis_connection
@@ -15,7 +16,7 @@ from market.utils.response_code import RETCODE
 class CartsView(View):
     """购物车管理"""
 
-    def post(self, request: WSGIRequest):
+    def post(self, request: HttpRequest):
         """添加购物车"""
         # 接收和校验参数
         json_dict = json.loads(request.body.decode())
@@ -91,7 +92,7 @@ class CartsView(View):
             response.set_cookie('carts', cookie_cart_str, max_age=constants.CARTS_COOKIE_EXPIRES)
             return response
 
-    def get(self, request: WSGIRequest):
+    def get(self, request: HttpRequest):
         user = request.user
         if user.is_authenticated:
             # 用户已登录，查询redis购物车
@@ -141,7 +142,7 @@ class CartsView(View):
 
         return render(request, 'cart.html', context)
 
-    def put(self, request: WSGIRequest):
+    def put(self, request: HttpRequest):
         """修改购物车"""
         # 接受参数
         json_dict = json.loads(request.body.decode())
@@ -277,7 +278,7 @@ class CartsView(View):
 class CartsSelectAllView(View):
     """全选购物车"""
 
-    def put(self, request: WSGIRequest):
+    def put(self, request: HttpRequest):
 
         # 接受和校验参数
         json_dict_str: str = request.body.decode()
@@ -330,7 +331,7 @@ class CartsSelectAllView(View):
 class CartsSimpleView(View):
     """商品页面右上角购物车"""
 
-    def get(self, request: WSGIRequest):
+    def get(self, request: HttpRequest):
         # 判断用户是否登录了
         user = request.user
         if user.is_authenticated:

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'goods.apps.GoodsConfig',
     'carts.apps.CartsConfig',
     'orders.apps.OrdersConfig',
+    'meiduo_admin.apps.MeiduoAdminConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
