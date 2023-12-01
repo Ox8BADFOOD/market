@@ -27,6 +27,8 @@ urlpatterns = [
     url(r'^', include(('goods.urls', 'list'), namespace='goods')),
     url(r'^', include(('carts.urls', 'carts'), namespace='carts')),
     url(r'^', include(('orders.urls', 'settlement'), namespace='orders')),
+    url(r'^meiduo_admin/', include('meiduo_admin.urls')),
+
     # 这个放在最后，app里面的正则什么都没写
     url(r'^', include(('contents.urls', 'index'), namespace='contents')),
 ]

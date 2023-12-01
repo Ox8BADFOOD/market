@@ -4,6 +4,7 @@ import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 if __name__ == '__main__':
+    # 默认开发环境配置文件
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'market.settings.dev')
     try:
         from django.core.management import execute_from_command_line

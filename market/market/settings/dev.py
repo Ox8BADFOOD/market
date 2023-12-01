@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
-
+import datetime
 import os, sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -39,6 +39,18 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# CORS 白名单
+CORS_ORIGIN_WHITELIST = (
+    'http://127.0.0.1:8080',
+    'http://127.0.0.1:8000',
+    'http://localhost:8080',
+    'http://www.meiduo.site:8080',
+    'http://api.meiduo.site:8000'
+)
+
+# 允许携带cookie
+CORS_ALLOW_CREDENTIALS = True
+
 # Application definition
 INSTALLED_APPS = [
     # 全文检索
@@ -52,6 +64,8 @@ INSTALLED_APPS = [
     'carts.apps.CartsConfig',
     'orders.apps.OrdersConfig',
     'meiduo_admin.apps.MeiduoAdminConfig',
+    'rest_framework_simplejwt',
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -61,6 +75,10 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # 跨域中间件
+    'corsheaders.middleware.CorsMiddleware',
+    # 支持中文语言
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -272,3 +290,78 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 # FastDFS相关参数
 FDFS_BASE_URL = 'http://172.16.104.3:8888/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+# 指明token的有效期
+SIMPLE_JWT = {
+    # Access Token的有效期
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=5),
+    # Refresh Token的有效期
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
+    # 是否自动刷新Refresh Token
+    'ROTATE_REFRESH_TOKENS': False,
+    # 刷新Refresh Token时是否将旧Token加入黑名单，如果设置为False，则旧的刷新令牌仍然可以用于获取新的访问令牌。
+    # 需要将'rest_framework_simplejwt.token_blacklist'加入到'INSTALLED_APPS'的配置中
+    'BLACKLIST_AFTER_ROTATION': False,
+    # 加密算法
+    'ALGORITHM': 'HS256',  # 加密算法
+    # 签名密匙，这里使用Django的SECRET_KEY
+    'SIGNING_KEY': SECRET_KEY,
+    # 如为True，则在每次使用访问令牌进行身份验证时，更新用户最后登录时间
+    "UPDATE_LAST_LOGIN": False,
+    # 用于验证JWT签名的密钥返回的内容。可以是字符串形式的密钥，也可以是一个字典。
+    "VERIFYING_KEY": "",
+    # JWT中的"Audience"声明,用于指定该JWT的预期接收者。
+    "AUDIENCE": None,
+    # JWT中的"Issuer"声明，用于指定该JWT的发行者。
+    "ISSUER": None,
+    # 用于序列化JWT负载的JSON编码器。默认为Django的JSON编码器。
+    "JSON_ENCODER": None,
+    # 包含公钥的URL，用于验证JWT签名。
+    "JWK_URL": None,
+    # 允许的时钟偏差量，以秒为单位。用于在验证JWT的过期时间和生效时间时考虑时钟偏差。
+    "LEEWAY": 0,
+    # 用于指定JWT在HTTP请求头中使用的身份验证方案。默认为"Bearer"
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    # 包含JWT的HTTP请求头的名称。默认为"HTTP_AUTHORIZATION"
+    "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
+    # 用户模型中用作用户ID的字段。默认为"id"。
+    "USER_ID_FIELD": "id",
+    # JWT负载中包含用户ID的声明。默认为"user_id"。
+    "USER_ID_CLAIM": "user_id",
+    # 用于指定用户身份验证规则的函数或方法。默认使用Django的默认身份验证方法进行身份验证。
+    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
+    # 用于指定可以使用的令牌类。默认为"rest_framework_simplejwt.tokens.AccessToken"。
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    # JWT负载中包含令牌类型的声明。默认为"token_type"。
+    "TOKEN_TYPE_CLAIM": "token_type",
+    # 用于指定可以使用的用户模型类。默认为"rest_framework_simplejwt.models.TokenUser"。
+    "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
+    # JWT负载中包含JWT ID的声明。默认为"jti"。
+    "JTI_CLAIM": "jti",
+    # 在使用滑动令牌时，JWT负载中包含刷新令牌过期时间的声明。默认为"refresh_exp"。
+    "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
+    # 滑动令牌的生命周期。默认为5分钟。
+    "SLIDING_TOKEN_LIFETIME": datetime.timedelta(minutes=5),
+    # 滑动令牌可以用于刷新的时间段。默认为1天。
+    "SLIDING_TOKEN_REFRESH_LIFETIME": datetime.timedelta(days=1),
+    # 用于生成访问令牌和刷新令牌的序列化器。
+    "TOKEN_OBTAIN_SERIALIZER": "meiduo_admin.serialziers.serializer.MyTokenObtainPairSerializer",
+    # 用于刷新访问令牌的序列化器。默认
+    "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
+    # 用于验证令牌的序列化器。
+    "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
+    # 用于列出或撤销已失效JWT的序列化器。
+    "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
+    # 用于生成滑动令牌的序列化器。
+    "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
+    # 用于刷新滑动令牌的序列化器。
+    "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
+}
