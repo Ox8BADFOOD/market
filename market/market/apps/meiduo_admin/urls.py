@@ -10,5 +10,16 @@ urlpatterns = [
     url('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     url('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # --- 数据统计 ---
-    url('^statistical/total_count/$', statistical.UserCountView.as_view())
+    # 用户总量统计
+    url('^statistical/total_count/$', statistical.UserTotalCountView.as_view()),
+    # 日增用户统计
+    url('^statistical/day_increment/$', statistical.UserDayCountView.as_view()),
+    # 日活跃用户统计
+    url('^statistical/day_active/$', statistical.UserActiveCountView.as_view()),
+    # 日下单用户量统计
+    url('^statistical/day_orders/$', statistical.UserOrderCountView.as_view()),
+    # 月增用户统计
+    url('^statistical/month_increment/$', statistical.UserMonthCountView.as_view()),
+    # 日分类商品访问量
+    url('^statistical/goods_day_views/$', statistical.GoodsDailyVisitView.as_view()),
 ]

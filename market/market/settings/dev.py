@@ -13,9 +13,11 @@ import datetime
 import os, sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
+current_file_path = os.path.abspath(__file__)
+BASE_DIR = os.path.dirname(os.path.dirname(current_file_path))
+path = os.path.join(BASE_DIR, "apps")
+print("path:%s" %(path))
+sys.path.insert(0, path)
 
 # 导包路径
 # ['/Users/max/Desktop/market/market',
