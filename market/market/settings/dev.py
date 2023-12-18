@@ -16,18 +16,9 @@ import os, sys
 current_file_path = os.path.abspath(__file__)
 BASE_DIR = os.path.dirname(os.path.dirname(current_file_path))
 path = os.path.join(BASE_DIR, "apps")
-print("path:%s" %(path))
+print("path:%s" % (path))
 sys.path.insert(0, path)
 
-# 导包路径
-# ['/Users/max/Desktop/market/market',
-# '/Users/max/Desktop/market/market',
-# '/Applications/PyCharm.app/Contents/plugins/python/helpers/pycharm_display',
-# '/Users/max/.pyenv/versions/3.9.0/lib/python39.zip',
-# '/Users/max/.pyenv/versions/3.9.0/lib/python3.9',
-# '/Users/max/.pyenv/versions/3.9.0/lib/python3.9/lib-dynload',
-# '/Users/max/.virtualenvs/market/lib/python3.9/site-packages',
-# '/Applications/PyCharm.app/Contents/plugins/python/helpers/pycharm_matplotlib_backend']
 print(sys.path)
 
 # Quick-start development settings - unsuitable for production
@@ -42,6 +33,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # CORS 白名单
+# Previously this setting was called CORS_ORIGIN_WHITELIST,
+# which still works as an alias, with the new name taking precedence.
 CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1:8080',
     'http://127.0.0.1:8000',
@@ -49,6 +42,14 @@ CORS_ORIGIN_WHITELIST = (
     'http://www.meiduo.site:8080',
     'http://api.meiduo.site:8000'
 )
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8080',
+    'http://127.0.0.1:8000',
+    'http://localhost:8080',
+    'http://www.meiduo.site:8080',
+    'http://api.meiduo.site:8000'
+]
 
 # 允许携带cookie
 CORS_ALLOW_CREDENTIALS = True
@@ -66,6 +67,7 @@ INSTALLED_APPS = [
     'carts.apps.CartsConfig',
     'orders.apps.OrdersConfig',
     'meiduo_admin.apps.MeiduoAdminConfig',
+    'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
     'django.contrib.admin',
@@ -282,8 +284,8 @@ MEDIA_URL = 'http://172.16.104.3:8888/'
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://172.16.104.3:9200/', # Elasticsearch服务器ip地址，端口号固定为9200
-        'INDEX_NAME': 'market', # Elasticsearch建立的索引库的名称
+        'URL': 'http://172.16.104.3:9200/',  # Elasticsearch服务器ip地址，端口号固定为9200
+        'INDEX_NAME': 'market',  # Elasticsearch建立的索引库的名称
     },
 }
 
@@ -295,10 +297,16 @@ FDFS_BASE_URL = 'http://172.16.104.3:8888/'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 使用rest_framework_simplejwt(token)验证身份
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 基于用户名密码认证方式
         'rest_framework.authentication.SessionAuthentication',
+        # 基于Session认证方式
         'rest_framework.authentication.BasicAuthentication',
     ),
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated'  # 默认权限为验证用户
+    # ],
 }
 
 # 指明token的有效期
