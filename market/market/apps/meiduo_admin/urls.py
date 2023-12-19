@@ -3,7 +3,8 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import statistical, user, sku
+from .views import statistical, user, sku, spec
+from rest_framework import routers
 
 urlpatterns = [
     # 登录方法
@@ -29,3 +30,14 @@ urlpatterns = [
     # sku
     url('^skus/$', sku.SKUView.as_view(actions={'get': 'list'})),
 ]
+
+router = routers.SimpleRouter()
+router.register(
+    prefix=r'goods/specs',
+    viewset=spec.SpecsView,
+    basename='specs'
+)
+
+urlpatterns += router.urls
+print("urlpatterns:%s" % urlpatterns)
+
