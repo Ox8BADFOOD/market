@@ -363,7 +363,7 @@ SIMPLE_JWT = {
     # 滑动令牌可以用于刷新的时间段。默认为1天。
     "SLIDING_TOKEN_REFRESH_LIFETIME": datetime.timedelta(days=1),
     # 用于生成访问令牌和刷新令牌的序列化器。
-    "TOKEN_OBTAIN_SERIALIZER": "meiduo_admin.serialziers.serializer.MyTokenObtainPairSerializer",
+    "TOKEN_OBTAIN_SERIALIZER": "meiduo_admin.serialziers.token.MyTokenObtainPairSerializer",
     # 用于刷新访问令牌的序列化器。默认
     "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
     # 用于验证令牌的序列化器。

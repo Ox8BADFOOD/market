@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import statistical
+from .views import statistical, user
 
 urlpatterns = [
     # 登录方法
@@ -22,4 +22,7 @@ urlpatterns = [
     url('^statistical/month_increment/$', statistical.UserMonthCountView.as_view()),
     # 日分类商品访问量
     url('^statistical/goods_day_views/$', statistical.GoodsDailyVisitView.as_view()),
+
+    # 用户管理
+    url('^users/$', user.UserView.as_view()),
 ]
