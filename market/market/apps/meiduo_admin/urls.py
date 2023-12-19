@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import statistical, user
+from .views import statistical, user, sku
 
 urlpatterns = [
     # 登录方法
@@ -25,4 +25,7 @@ urlpatterns = [
 
     # 用户管理
     url('^users/$', user.UserView.as_view()),
+
+    # sku
+    url('^skus/$', sku.SKUView.as_view(actions={'get': 'list'})),
 ]

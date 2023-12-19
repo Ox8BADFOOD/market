@@ -8,10 +8,12 @@ from rest_framework.response import Response
 from goods.models import GoodsVisitCount
 from serialziers.statistical import GoodsDailyVisitSerializer
 
+
 class UserTotalCountView(APIView):
     """
     用户总量统计
     """
+
     # 权限指定
     # permission_classes = [IsAdminUser]
     def get(self, request):
@@ -25,10 +27,12 @@ class UserTotalCountView(APIView):
             'count': count
         })
 
+
 class UserDayCountView(APIView):
     """
     日增用户统计
     """
+
     # 权限指定
     # permission_classes = [IsAdminUser]
     def get(self, request):
@@ -43,6 +47,7 @@ class UserDayCountView(APIView):
             'date': now_date,
             'count': count
         })
+
 
 class UserActiveCountView(APIView):
     """
@@ -64,6 +69,7 @@ class UserActiveCountView(APIView):
             'count': count
         })
 
+
 class UserOrderCountView(APIView):
     """
     日下单用户量统计
@@ -83,6 +89,7 @@ class UserOrderCountView(APIView):
             'date': now_date,
             'count': count
         })
+
 
 class UserMonthCountView(APIView):
     # 权限指定
@@ -110,6 +117,7 @@ class UserMonthCountView(APIView):
             })
 
         return Response(date_list)
+
 
 class GoodsDailyVisitView(APIView):
 
