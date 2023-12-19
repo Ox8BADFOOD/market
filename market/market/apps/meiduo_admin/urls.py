@@ -29,8 +29,12 @@ urlpatterns = [
 
     # sku
     url('^skus/$', sku.SKUView.as_view(actions={'get': 'list'})),
+
+    # spu关联商品
+    url('^goods/simple/$', spec.SpecsView.as_view(actions={'get': 'simple'})),
 ]
 
+# 产品规格
 router = routers.SimpleRouter()
 router.register(
     prefix=r'goods/specs',
