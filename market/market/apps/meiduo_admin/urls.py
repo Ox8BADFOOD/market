@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import statistical, user, sku, spec, spec_option
+from .views import statistical, user, sku, spec, spec_option, image
 from rest_framework import routers
 
 urlpatterns = [
@@ -45,7 +45,15 @@ urlpatterns += router.urls
 router.register(
     prefix=r'specs/options',
     viewset=spec_option.SpecOptionView,
-    basename='specs_option'
+    basename='specs_options'
+)
+urlpatterns += router.urls
+
+# SKU图片
+router.register(
+    prefix=r'skus/images',
+    viewset=image.ImageView,
+    basename='images'
 )
 urlpatterns += router.urls
 
