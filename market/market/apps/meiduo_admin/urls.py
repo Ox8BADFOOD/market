@@ -31,6 +31,9 @@ urlpatterns = [
     url('^goods/simple/$', spec.SpecsView.as_view(actions={'get': 'simple'})),
     # 规格选项
     url('^goods/specs/simple/$', spec_option.SpecOptionView.as_view(actions={'get': 'simple'})),
+    # 查询SKU
+    url('^skus/simple/$', image.ImageView.as_view(actions={'get': 'simple'})),
+
 ]
 
 # 产品规格
