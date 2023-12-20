@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from serialziers.SPU import SPUSerializer
+from serialziers.spu import SPUSerializer
 from serialziers.spec import SpecsSerializer
 from goods.models import SPUSpecification, SPU
 from utils.PageNum import PageNum

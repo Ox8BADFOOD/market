@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import statistical, user, sku, spec
+from .views import statistical, user, sku, spec, spec_option
 from rest_framework import routers
 
 urlpatterns = [
@@ -23,15 +23,14 @@ urlpatterns = [
     url('^statistical/month_increment/$', statistical.UserMonthCountView.as_view()),
     # 日分类商品访问量
     url('^statistical/goods_day_views/$', statistical.GoodsDailyVisitView.as_view()),
-
     # 用户管理
     url('^users/$', user.UserView.as_view()),
-
     # sku
     url('^skus/$', sku.SKUView.as_view(actions={'get': 'list'})),
-
     # spu关联商品
     url('^goods/simple/$', spec.SpecsView.as_view(actions={'get': 'simple'})),
+    # 规格选项
+    url('^goods/specs/simple/$', spec_option.SpecOptionView.as_view(actions={'get': 'simple'})),
 ]
 
 # 产品规格
@@ -41,7 +40,14 @@ router.register(
     viewset=spec.SpecsView,
     basename='specs'
 )
-
 urlpatterns += router.urls
+# 规格选项
+router.register(
+    prefix=r'specs/options',
+    viewset=spec_option.SpecOptionView,
+    basename='specs_option'
+)
+urlpatterns += router.urls
+
 print("urlpatterns:%s" % urlpatterns)
 
