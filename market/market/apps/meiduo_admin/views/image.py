@@ -3,8 +3,9 @@ from rest_framework.viewsets import ModelViewSet
 from serialziers.ImageSerializer import ImageSerializer
 from goods.models import SKUImage, SKU
 from utils.PageNum import PageNum
-from  rest_framework.request import Request
+from rest_framework.request import Request
 from serialziers.sku import SKUSerializer
+
 
 class ImageView(ModelViewSet):
     serializer_class = ImageSerializer
@@ -19,5 +20,3 @@ class ImageView(ModelViewSet):
         data = SKU.objects.all()
         ser = SKUSerializer(data, many=True)
         return Response(ser.data)
-
-

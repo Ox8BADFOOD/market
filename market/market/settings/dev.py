@@ -268,12 +268,12 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 AUTH_USER_MODEL = "users.User"
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # 指定邮件后端
-EMAIL_HOST = 'smtp.163.com' # 发邮件主机
-EMAIL_PORT = 25 # 发邮件端口
-EMAIL_HOST_USER = 'bymiracles@163.com' # 授权的邮箱
-EMAIL_HOST_PASSWORD = 'EGDNTWMILUBHPLGL' # 邮箱授权时获得的密码，非注册登录密码
-EMAIL_FROM = '母爱妈妈<bymiracles@163.com>' # 发件人抬头
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # 指定邮件后端
+EMAIL_HOST = 'smtp.163.com'  # 发邮件主机
+EMAIL_PORT = 25  # 发邮件端口
+EMAIL_HOST_USER = 'bymiracles@163.com'  # 授权的邮箱
+EMAIL_HOST_PASSWORD = 'EGDNTWMILUBHPLGL'  # 邮箱授权时获得的密码，非注册登录密码
+EMAIL_FROM = '母爱妈妈<bymiracles@163.com>'  # 发件人抬头
 EMAIL_VERIFY_URL = 'http://127.0.0.1:8000/emails/verification/'
 # 指定自定义的Django文件存储类
 # DEFAULT_FILE_STORAGE = 'market.utils.fastdfs.fdfs_storage.FastDFSStorage'
@@ -375,3 +375,5 @@ SIMPLE_JWT = {
     # 用于刷新滑动令牌的序列化器。
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
+FASTDFS_PATH = os.path.join(BASE_DIR, 'utils/fastdfs/client.conf')
