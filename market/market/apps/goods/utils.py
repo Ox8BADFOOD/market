@@ -1,4 +1,7 @@
-def get_breadcrumb(category):
+from goods.models import GoodsCategory
+
+
+def get_breadcrumb(category :GoodsCategory):
     """
     获取面包屑导航
     :param category: 商品类别

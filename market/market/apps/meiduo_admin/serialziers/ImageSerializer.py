@@ -3,6 +3,7 @@ from fdfs_client.client import Fdfs_client
 from rest_framework import serializers
 from rest_framework.response import Response
 
+from celery_tasks.static_file.task import get_detail_html
 from goods.models import SKUImage
 
 
@@ -25,6 +26,7 @@ class ImageSerializer(serializers.ModelSerializer):
         image_url = res['Remote file_id']
         # 获取sku_id
         sku_id = self.context['request'].data.get('sku')[0]
+        get_detail_html(sku_id=sku_id)
         # 保存图片
         img = SKUImage.objects.create(sku_id=sku_id, image=image_url)
         return img
