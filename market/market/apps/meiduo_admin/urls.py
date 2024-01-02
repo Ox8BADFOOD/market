@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import statistical, user, sku, spec, spec_option, image
+from .views import statistical, user, sku, spec, spec_option, image, order
 from rest_framework import routers
 
 urlpatterns = [
@@ -26,24 +26,28 @@ urlpatterns = [
     # 用户管理
     url('^users/$', user.UserView.as_view()),
     # sku
-    url('^skus/$', sku.SKUView.as_view(actions={'get': 'list'})),
+    url('^skus/categories/$', sku.SKUView.as_view(actions={'get': 'categories'})),
     # spu关联商品
-    url('^goods/simple/$', spec.SpecsView.as_view(actions={'get': 'simple'})),
-    # 规格选项
+    url('^goods/simple/$', spec.SPUSpecsView.as_view(actions={'get': 'simple'})),
+    # 所有SPU规格
     url('^goods/specs/simple/$', spec_option.SpecOptionView.as_view(actions={'get': 'simple'})),
+    # 某一个SPU规格
+    url('^goods/(?P<pk>\d+)/specs/$', spec.SPUSpecsView.as_view(actions={'get': 'specs'})),
     # 查询SKU
     url('^skus/simple/$', image.ImageView.as_view(actions={'get': 'simple'})),
-
 ]
 
-# 产品规格
+
 router = routers.SimpleRouter()
+
+# 产品规格
 router.register(
     prefix=r'goods/specs',
-    viewset=spec.SpecsView,
+    viewset=spec.SPUSpecsView,
     basename='specs'
 )
 urlpatterns += router.urls
+
 # 规格选项
 router.register(
     prefix=r'specs/options',
@@ -57,6 +61,22 @@ router.register(
     prefix=r'skus/images',
     viewset=image.ImageView,
     basename='images'
+)
+urlpatterns += router.urls
+
+# sku
+router.register(
+    prefix=r'skus',
+    viewset=sku.SKUView,
+    basename='skus'
+)
+urlpatterns += router.urls
+
+# 订单
+router.register(
+    prefix=r'orders',
+    viewset=order.OrderView,
+    basename='orders'
 )
 urlpatterns += router.urls
 

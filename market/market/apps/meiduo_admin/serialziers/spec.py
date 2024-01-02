@@ -2,7 +2,7 @@ from rest_framework import serializers
 from goods.models import SPUSpecification
 
 
-class SpecsSerializer(serializers.ModelSerializer):
+class SPUSpecsSerializer(serializers.ModelSerializer):
     """
     规格序列化器
     """

@@ -1,8 +1,8 @@
 from django.http import HttpRequest
 from rest_framework.generics import ListCreateAPIView
-from serialziers.user import UserSerializer, UserAddSerializer
+from meiduo_admin.serialziers.user import UserSerializer, UserAddSerializer
 from users.models import User
-from utils.PageNum import PageNum
+from meiduo_admin.utils.PageNum import PageNum
 
 
 class UserView(ListCreateAPIView):

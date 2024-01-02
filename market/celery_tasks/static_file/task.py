@@ -5,6 +5,7 @@ from typing import List, Type, Dict, Tuple
 
 from django.db.models import QuerySet
 
+from celery_tasks.main import celery_app
 from contents.utils import get_categories
 from goods.models import SPU, SKU, SKUSpecification, SPUSpecification, SpecificationOption
 from goods.utils import get_breadcrumb
@@ -12,7 +13,8 @@ from django.shortcuts import render
 from django.conf import settings
 
 
-def get_detail_html(sku_id: int):
+@celery_app.task(bind=True, name='get_detail_html', retry_backoff=3)
+def get_detail_html(self, sku_id: int):
     sku = SKU.objects.get(id=sku_id)
 
     # 分类数据
@@ -49,16 +51,12 @@ def get_detail_html(sku_id: int):
     for spec in sku_specs:
         current_sku_option_list.append(spec.option.id)
 
-    # sku对应spu所有规格列表（返回给模版）
-    spu_specs_list: list[SPUSpecification] = []
-
     # 获取SPU所有规格信息（例如：电脑商品的屏幕尺寸、颜色、内存），并且排序过顺序是固定
     spu_specs: QuerySet[SPUSpecification] = spu.specs.order_by('id')
     # 遍历当前spu所有的规格
     spu_spec: SPUSpecification  # spu规格（例如：电脑商品的屏幕尺寸、颜色、内存）
     for index, spu_spec in enumerate(spu_specs):
-        # 规格选项列表
-        option_list: list[SpecificationOption] = []
+
         # 规格所有选项，例如 13.3寸 15.4寸
         spu_spec_options: QuerySet[SpecificationOption] = spu_spec.options.all()
         # 遍历spu规格选项（例如 13.3寸）
@@ -70,12 +68,8 @@ def get_detail_html(sku_id: int):
             sku_option_temp[index] = option.id
             # *** 为选项添加sku_id属性，用于在html中输出链接
             option.sku_id = options_sku_dict.get(tuple(sku_option_temp), 0)
-            # 添加选项对象
-            option_list.append(option)
         # *** 为规格对象添加选项列表
-        spu_spec.option_list = option_list
-        # 重新构造规格数据
-        spu_specs_list.append(spu_spec)
+        spu_spec.spec_options = spu_spec_options
 
     context = {
         'sku': sku,
@@ -83,7 +77,7 @@ def get_detail_html(sku_id: int):
         'breadcrumb': breadcrumb,
         'category_id': sku.category_id,
         'spu': spu,
-        'specs': spu_specs_list
+        'specs': spu_specs
     }
     response = render(None, 'detail.html', context)
 

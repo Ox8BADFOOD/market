@@ -6,7 +6,7 @@ import market.apps.users.apps
 from users.models import User
 from rest_framework.response import Response
 from goods.models import GoodsVisitCount
-from serialziers.statistical import GoodsDailyVisitSerializer
+from meiduo_admin.serialziers.statistical import GoodsDailyVisitSerializer
 
 
 class UserTotalCountView(APIView):

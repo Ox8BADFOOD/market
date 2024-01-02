@@ -26,7 +26,8 @@ class ImageSerializer(serializers.ModelSerializer):
         image_url = res['Remote file_id']
         # 获取sku_id
         sku_id = self.context['request'].data.get('sku')[0]
-        get_detail_html(sku_id=sku_id)
+        # 生成新的详情页面
+        get_detail_html.delay(sku_id=sku_id)
         # 保存图片
         img = SKUImage.objects.create(sku_id=sku_id, image=image_url)
         return img
@@ -43,6 +44,8 @@ class ImageSerializer(serializers.ModelSerializer):
             return Response(status=403)
         # 获取上传后的路径
         image_url = res['Remote file_id']
+        # 生成新的详情页面
+        get_detail_html.delay(sku_id=instance.sku_id)
         # 保存图片
         instance.image = image_url
         # 数据库保存

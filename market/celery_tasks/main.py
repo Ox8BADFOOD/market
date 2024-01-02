@@ -12,4 +12,4 @@ celery_app = Celery('market')
 celery_app.config_from_object(obj='celery_tasks.config')
 
 # 自动注册celery任务
-celery_app.autodiscover_tasks(packages=['celery_tasks.email'])
+celery_app.autodiscover_tasks(packages=['celery_tasks.email', 'celery_tasks.static_file'])

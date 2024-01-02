@@ -1,10 +1,10 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from serialziers.ImageSerializer import ImageSerializer
+from meiduo_admin.serialziers.ImageSerializer import ImageSerializer
 from goods.models import SKUImage, SKU
-from utils.PageNum import PageNum
+from meiduo_admin.utils.PageNum import PageNum
 from rest_framework.request import Request
-from serialziers.sku import SKUSerializer
+from meiduo_admin.serialziers.sku import SKUSerializer
 
 
 class ImageView(ModelViewSet):

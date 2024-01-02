@@ -1,7 +1,10 @@
+from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
-from goods.models import SKU
-from serialziers.sku import SKUSerializer
-from utils.PageNum import PageNum
+from goods.models import SKU, GoodsCategory
+from meiduo_admin.serialziers.sku import SKUSerializer
+from meiduo_admin.utils.PageNum import PageNum
+from meiduo_admin.serialziers.CategorySerializer import CategorySerializer
 
 
 class SKUView(ModelViewSet):
@@ -16,4 +19,13 @@ class SKUView(ModelViewSet):
         if keyword == '' or keyword is None:
             return SKU.objects.all()
         else:
-            return SKU.objects.filter(name=keyword)
+            return SKU.objects.filter(name__contains=keyword)
+
+    def categories(self, request):
+        """
+        获取三级分类
+        @type request: 请求
+        """
+        data = GoodsCategory.objects.filter(subs__id=None)
+        ser = CategorySerializer(data, many=True)
+        return Response(ser.data)
